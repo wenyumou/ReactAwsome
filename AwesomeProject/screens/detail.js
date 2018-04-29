@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Image, ScrollView, Dimensions } from 'react-native';
 import  jg from '../jg'
 import HTML from 'react-native-render-html';
+import { Tile } from 'react-native-elements'
 
 export default class DetailScreen extends React.Component {
   constructor(props) {
@@ -38,13 +39,25 @@ export default class DetailScreen extends React.Component {
     jg.log('render');
     const Entities = require('html-entities').XmlEntities;
     const content = this.state.content;
+    let media = {};
+    try{
+      media = this.state.medias[0];
+      jg.log(media.fileName);
+    }
+    catch(e){} 
     return (
       <ScrollView>
-        <Text>{content.name} </Text>
-        <Text>{content.keyword} </Text>
-        <Image source={{uri: content.path + content.bigThumb}} style={{width: 256, height:256}} />
-        <HTML html ={Entities.decode(content.detail)} imagesMaxWidth={Dimensions.get('window').width} />
+        <Tile
+          imageSrc={{ uri: content.path + content.bigThumb }}
+          title={content.name}
+          contentContainerStyle={{ height: 150 }}>
+          <View>
+            <Text>Tags: {content.keyword}</Text>
+          </View>
+        </Tile>
+        <HTML html ={Entities.decode(content.detail)} imagesMaxWidth={Dimensions.get('window').width} containerStyle={{padding:20,}} />
       </ScrollView>
+
     );
   }
 
@@ -52,12 +65,12 @@ export default class DetailScreen extends React.Component {
     jg.log("load loadeMedias");
     let url = jg.getContentUrl(contentTypeID, contentID);
     url+="?isAjax=true&actionType=GetMediaJson";
-    // jg.log(url);
+    jg.log(url);
     fetch(url)
     .then(response => response.json())
     .then(json => {
       json.forEach(m => {
-          m.path = "https://beta.jgospel.net/" + m.path;
+          m.fileName = "https://beta.jgospel.net/" + m.fileName;
       });
       this.setState({
           medias: json,

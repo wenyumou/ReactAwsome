@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, Button, AppState, ActivityIndicator, ListView, FlatList, TouchableHighlight} from 'react-native';
+import { Text, View, Button, AppState, ActivityIndicator, FlatList} from 'react-native';
 // import { TabNavigator, TabBarBottom, StackNavigator } from 'react-navigation';
 // import Ionicons from 'react-native-vector-icons/Ionicons';
 // import Icon from "react-native-vector-icons/FontAwesome";
@@ -15,9 +15,7 @@ export default class HomeScreen extends React.Component {
         this.state = {
             isLoading:false,
             data:[],
-            page:1,
-            speed:1,
-            isReloading:false
+            page:1
         };
     }
     state = {
@@ -25,33 +23,8 @@ export default class HomeScreen extends React.Component {
     }
     componentDidMount() {
         AppState.addEventListener('change', this._handleAppStateChange);
-        this.setState({isLoading:true});
-      return;
-    fetch('https://beta.jgospel.net//Portals/_default/Skins/JGospel2016/Json/typeJson.js')
-        .then((response) => response.json())
-        .then((json) => {
-        jg.types = json;
-        fetch('https://beta.jgospel.net//Portals/_default/Skins/JGospel2016/Json/typeContent.js')
-            .then(response => response.json())
-            .then(json => {
-                jg.typeContent = json;
-                console.log(jg.typeContent.length);
-                //   jg.log(json);
-                this.setState({
-                    isLoading: false,
-                    isReloading:false,
-                    data: json,
-                }, function(){
-                });
-            })
-            .catch((error) =>{
-                console.error(error);
-            });
-        })
-        .catch((error) =>{
-        console.error(error);
-        });
-        
+        return;
+        this.loadData();
     }
 
     componentWillUnmount() {
@@ -71,5 +44,31 @@ export default class HomeScreen extends React.Component {
                 <Text>Coming soon...</Text>
             </View>
         );
+    }
+
+    loadData=()=>{
+        this.setState({isLoading:true});
+        fetch('https://beta.jgospel.net//Portals/_default/Skins/JGospel2016/Json/typeJson.js')
+        .then((response) => response.json())
+        .then((json) => {
+            jg.types = json;
+            fetch('https://beta.jgospel.net//Portals/_default/Skins/JGospel2016/Json/typeContent.js')
+                .then(response => response.json())
+                .then(json => {
+                jg.typeContent = json;
+                    console.log(jg.typeContent.length);
+                    this.setState({
+                        isLoading: false,
+                        data: json,
+                    }, function(){
+                    });
+            })
+            .catch((error) =>{
+                console.error(error);
+            });
+        })
+        .catch((error) =>{
+        console.error(error);
+        });
     }
 }
