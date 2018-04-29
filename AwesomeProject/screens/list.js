@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Button, Text, FlatList,TouchableHighlight,Image, StyleSheet } from 'react-native';
+import { View, Button, Text, FlatList, Image } from 'react-native';
 import { ListItem } from 'react-native-elements'
 import jg from '../jg';
 
@@ -7,14 +7,27 @@ export default class ListScreen extends React.Component {
     constructor(props) {
         jg.log("ListScreen init");
         super(props);
+        const { params } = this.props.navigation.state;
+        const contentTypeID = params ? params.contentTypeID : null;
+        console.log(contentTypeID);
         this.state={
             isLoading:false,
             isReloading:false,
             data:[],
-            page:1
+            page:1,
+            contentTypeID:contentTypeID
         };
     };
 
+    static navigationOptions = ({ navigation }) => {
+        // jg.log("navigationOptions");
+        const { params } = navigation.state;
+        
+        return {
+          title: params ? params.name : null
+        }
+      };
+      
     contentKey = (item, index) => String(item.contentID);
 
     componentDidMount(){
@@ -22,6 +35,7 @@ export default class ListScreen extends React.Component {
     };
 
   render() {
+      jg.log("List Render");
     return (
     //   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
     //     { /* other code from before here */ }
@@ -115,24 +129,6 @@ export default class ListScreen extends React.Component {
         this.loadData(); 
     })
   }
-
-  styles = StyleSheet.create({
-        container:{
-            backgroundColor: 'white',
-            flexDirection: 'row',
-        },
-        thumb:{
-            width: 128, height:80, 
-            // flex:2,
-        },
-        text:{
-            // flex:3
-        }
-        
-    })
-
-
-
 
 }
   

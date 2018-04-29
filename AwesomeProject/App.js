@@ -23,12 +23,21 @@ class NewsList extends ListScreen{
   }
 };
 
+class DynamicList extends ListScreen{
+  constructor(props){
+    super(props);
+    // this.state.contentTypeID=279;
+  };
+};
+
 const HomeStack = StackNavigator({
   Home: { screen: HomeScreen,
     navigationOptions:{
       title:'Home'
     }
   },
+  List:{screen: DynamicList},
+  Detail:{screen:DetailScreen}
 });
 
 const HymnsStack = StackNavigator({

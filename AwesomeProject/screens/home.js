@@ -1,9 +1,9 @@
 import React from 'react';
-import { Text, View, Button, AppState, ActivityIndicator, FlatList} from 'react-native';
+import { View, AppState, FlatList} from 'react-native';
 // import { TabNavigator, TabBarBottom, StackNavigator } from 'react-navigation';
 // import Ionicons from 'react-native-vector-icons/Ionicons';
 // import Icon from "react-native-vector-icons/FontAwesome";
-
+import HomeTypeCard from '../components/HomeTypeCard'
 import jg from '../jg';
 
 
@@ -13,17 +13,18 @@ export default class HomeScreen extends React.Component {
         jg.log("Home Screen init");
         super(props);
         this.state = {
-            isLoading:false,
-            data:[],
-            page:1
+            isLoading:true,
+            types:[],
+            typeContents:[]
         };
     }
     state = {
         appState: AppState.currentState
     }
+    typeKey = (item, index) => String(item.Key);
+
     componentDidMount() {
         AppState.addEventListener('change', this._handleAppStateChange);
-        return;
         this.loadData();
     }
 
@@ -39,27 +40,36 @@ export default class HomeScreen extends React.Component {
 
     }
     render() {
+        jg.log("home render");
+        
         return (
-            <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                <Text>Coming soon...</Text>
-            </View>
+            <FlatList
+            keyExtractor={this.typeKey}
+            data={this.state.typeContents}
+            renderItem={this.renderItem}
+            numColumns={2}
+            />
         );
+        
+        
     }
-
-    loadData=()=>{
+    loadData(){
+        jg.log("load data");
         this.setState({isLoading:true});
         fetch('https://beta.jgospel.net//Portals/_default/Skins/JGospel2016/Json/typeJson.js')
         .then((response) => response.json())
         .then((json) => {
             jg.types = json;
+            console.log("got types length="+jg.types.length);
             fetch('https://beta.jgospel.net//Portals/_default/Skins/JGospel2016/Json/typeContent.js')
                 .then(response => response.json())
                 .then(json => {
                 jg.typeContent = json;
-                    console.log(jg.typeContent.length);
+                    console.log("got typeContent length="+jg.typeContent.length);
                     this.setState({
                         isLoading: false,
-                        data: json,
+                        typeContents: json,
+                        types:jg.types
                     }, function(){
                     });
             })
@@ -71,4 +81,11 @@ export default class HomeScreen extends React.Component {
         console.error(error);
         });
     }
+
+    renderItem=({item})=>(
+        <View style={{flex:1}}>
+            <HomeTypeCard item={item} nav={this.props.navigation}  />
+        </View>
+        
+    )
 }

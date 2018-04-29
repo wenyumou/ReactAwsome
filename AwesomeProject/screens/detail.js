@@ -50,7 +50,8 @@ export default class DetailScreen extends React.Component {
         <Tile
           imageSrc={{ uri: content.path + content.bigThumb }}
           title={content.name}
-          contentContainerStyle={{ height: 150 }}>
+          contentContainerStyle={{ height: 150 }}
+          height={Dimensions.get('window').width}>
           <View>
             <Text>Tags: {content.keyword}</Text>
           </View>
