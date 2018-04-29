@@ -32,6 +32,8 @@ export default class ListScreen extends React.Component {
       renderItem={this.renderItem}
       onEndReached={this.loadMore}
       onEndReachedThreshold = {1}
+      refreshing = {this.state.isReloading}
+      onRefresh = {this.reload}
     />
     );
   };
@@ -84,8 +86,6 @@ export default class ListScreen extends React.Component {
             })
             data = data.concat(uniqueJson);
         }
-        
-
         this.setState({
             isLoading: false,
             isReloading:false,
@@ -101,9 +101,19 @@ export default class ListScreen extends React.Component {
   loadMore=()=>{
       this.setState({
           page : this.state.page +1
+
       }, function(){
           this.loadData(); 
       })
+  }
+
+  reload =()=>{
+    this.setState({
+        page : 1,
+        isReloading:true
+    }, function(){
+        this.loadData(); 
+    })
   }
 
   styles = StyleSheet.create({
