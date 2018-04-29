@@ -13,17 +13,13 @@ import jg from './jg';
 class HymnsList extends ListScreen{
   constructor(props){
     super(props);
-  }
-  state={
-    contentTypeID:279
-  }
+    this.state.contentTypeID=279;
+  };
 };
 class NewsList extends ListScreen{
   constructor(props){
     super(props);
-  }
-  state={
-    contentTypeID:345
+    this.state.contentTypeID=345;
   }
 };
 

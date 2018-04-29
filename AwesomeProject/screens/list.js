@@ -7,30 +7,19 @@ export default class ListScreen extends React.Component {
     constructor(props) {
         jg.log("ListScreen init");
         super(props);
-        this.state = {
+        this.state={
             isLoading:false,
+            isReloading:false,
             data:[],
-            page:1,
-            speed:1,
-            isReloading:false
+            page:1
         };
     };
 
-    static navigationOptions = ({ navigation }) => {
-        // const { params } = navigation.state;
-        // jg.log(navigation);
-        // return {
-        //   title: params ? params.otherParam : 'A Nested Details Screen',
-        // }
-        title:'Hymns';
-      };
-    
-    
     contentKey = (item, index) => String(item.contentID);
 
-  componentDidMount(){
-    this.loadData();
-  };
+    componentDidMount(){
+        this.loadData();
+    };
 
   render() {
     return (
@@ -41,8 +30,9 @@ export default class ListScreen extends React.Component {
       keyExtractor={this.contentKey}
       data={this.state.data}
       renderItem={this.renderItem}
+      onEndReached={this.loadMore}
+      onEndReachedThreshold = {1}
     />
-
     );
   };
 
@@ -56,34 +46,64 @@ export default class ListScreen extends React.Component {
             this.props.navigation.navigate('Detail', {
                 contentID: item.contentID,
                 contentTypeID:item.contentTypeID,
-                name: item.name
+                name: item.name,
+                content:item
             });
         }}
     />
-  )
+  );
 
-  loadData(){
+  loadData=()=>{
     jg.log("loadData");
     let url = jg.getTypeUrl(this.state.contentTypeID);
-    url+="?isApi=true&api=GetContentByPage";
+    url+="?isApi=true&api=GetContentByPage&curPageNum=" + this.state.page;
+    jg.log(url);
+    this.setState({ isLoading: true });
+    jg.log("load date page= " + this.state.page);
+    jg.log("content type Id= " + this.state.contentTypeID);
     fetch(url)
     .then(response => response.json())
     .then(json => {
         json.forEach(c => {
             c.path = "https://beta.jgospel.net/" + c.path;
         });
-        jg.setContent(this.state.contentTypeID, json);
+        let data = this.state.data;
+        if(this.state.page == 1){
+            data = json;
+        }
+        else{
+            let uniqueJson = json.filter(function(j){
+                let mattches = data.filter(function(d){
+                    if(d.contentID == j.contentID){
+                        return d;
+                    }
+                })
+                if(mattches.length==0){
+                    return j;
+                }
+            })
+            data = data.concat(uniqueJson);
+        }
+        
 
         this.setState({
             isLoading: false,
             isReloading:false,
-            data: json,
+            data: data
         }, function(){
         });
     })
     .catch((error) =>{
         console.error(error);
     });
+  };
+
+  loadMore=()=>{
+      this.setState({
+          page : this.state.page +1
+      }, function(){
+          this.loadData(); 
+      })
   }
 
   styles = StyleSheet.create({

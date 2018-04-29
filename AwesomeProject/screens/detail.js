@@ -10,7 +10,7 @@ export default class DetailScreen extends React.Component {
     const { params } = this.props.navigation.state;
     const contentID = params ? params.contentID : null;
     const contentTypeID = params ? params.contentTypeID : null;
-    const content = jg.getContent(contentTypeID, contentID);
+    const content = params ? params.content : null;
     this.state = {
         medias:[],
         content:content,

@@ -13,6 +13,7 @@ export default class jg {
      this.log("getTypeContent");
   };
 
+  //not using namore, use cmp state
   static getContent(typeID, contentID){
     let c ={};
     jg.data = jg.data ||[];
@@ -36,6 +37,7 @@ export default class jg {
     return c;
   }
 
+  //not using namore, use cmp state
   static setContent(typeID, contents){
     jg.data = jg.data||[];
 
